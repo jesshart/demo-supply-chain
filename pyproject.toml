@@ -1,0 +1,68 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "demo-supply-chain"
+dynamic = ["version"]
+description = ''
+readme = "README.md"
+requires-python = ">=3.8"
+license = "MIT"
+keywords = []
+authors = [{ name = "jesshart" }]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
+]
+dependencies = ["numpy", "pandas", "marimo", "seaborn", "matplotlib", "kaggle"]
+
+[project.urls]
+Documentation = "https://github.com/jesshart/demo-supply-chain#readme"
+Issues = "https://github.com/jesshart/demo-supply-chain/issues"
+Source = "https://github.com/jesshart/demo-supply-chain"
+
+[tool.hatch.version]
+path = "src/demo_supply_chain/__about__.py"
+
+[tool.hatch.env]
+requires = ["hatch-pip-compile"]
+
+[tool.hatch.envs.default]
+installer = "uv"
+type = "pip-compile"
+
+[tool.hatch.envs.default.scripts]
+pull-data = [
+  "kaggle datasets download -d harshsingh2209/supply-chain-analysis -p src/demo_supply_chain/data/raw",
+  "unzip src/demo_supply_chain/data/raw/supply-chain-analysis.zip -d src/demo_supply_chain/data/raw",
+]
+notebook = ["marimo edit src/demo_supply_chain/notebooks/demo.py"]
+
+[tool.hatch.envs.types]
+extra-dependencies = ["mypy>=1.0.0"]
+[tool.hatch.envs.types.scripts]
+check = "mypy --install-types --non-interactive {args:src/demo_supply_chain tests}"
+
+[tool.coverage.run]
+source_pkgs = ["demo_supply_chain", "tests"]
+branch = true
+parallel = true
+omit = ["src/demo_supply_chain/__about__.py"]
+
+[tool.coverage.paths]
+demo_supply_chain = [
+  "src/demo_supply_chain",
+  "*/demo-supply-chain/src/demo_supply_chain",
+]
+tests = ["tests", "*/demo-supply-chain/tests"]
+
+[tool.coverage.report]
+exclude_lines = ["no cov", "if __name__ == .__main__.:", "if TYPE_CHECKING:"]
